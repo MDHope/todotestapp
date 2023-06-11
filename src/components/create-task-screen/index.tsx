@@ -1,8 +1,9 @@
 import {zodResolver} from '@hookform/resolvers/zod';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {useForm} from 'react-hook-form';
 import {View} from 'react-native';
-import {Button, Portal, Snackbar} from 'react-native-paper';
+import {Button} from 'react-native-paper';
+import Toast from 'react-native-root-toast';
 import {createTaskSchema} from '../../domain/schemas';
 import {CreateTaskRequest, ResponseStatus} from '../../domain/types';
 import {RootStackScreenProps} from '../../router/types';
@@ -13,7 +14,6 @@ import TextInput from '../ui/TextInput';
 interface CreateTaskScreenProps extends RootStackScreenProps<'Create'> {}
 
 export default function CreateTaskScreen({navigation}: CreateTaskScreenProps) {
-  const [isNotificationVisible, setIsNotificationVisible] = useState(false);
   const {control, handleSubmit} = useForm<CreateTaskRequest>({
     resolver: zodResolver(createTaskSchema),
   });
@@ -22,10 +22,13 @@ export default function CreateTaskScreen({navigation}: CreateTaskScreenProps) {
   useEffect(() => {
     if (isSuccess && data?.status === ResponseStatus.OK) {
       navigation.navigate('Home');
+      Toast.show('Задача успешно создана', {
+        duration: Toast.durations.SHORT,
+        position: Toast.positions.BOTTOM,
+        hideOnPress: true,
+      });
     }
   }, [isSuccess]);
-
-  const onDismiss = () => setIsNotificationVisible(false);
 
   return (
     <Layout title="Новая задача">
@@ -61,11 +64,6 @@ export default function CreateTaskScreen({navigation}: CreateTaskScreenProps) {
           Создать
         </Button>
       </View>
-      <Portal>
-        <Snackbar visible={isNotificationVisible} onDismiss={onDismiss}>
-          Задача успешно создана
-        </Snackbar>
-      </Portal>
     </Layout>
   );
 }

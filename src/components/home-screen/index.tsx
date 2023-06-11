@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, ScrollView} from 'react-native';
-import {Snackbar, Button, Portal} from 'react-native-paper';
+import {Button} from 'react-native-paper';
+import Toast from 'react-native-root-toast';
 import {useSelector} from 'react-redux';
 import {Task} from '../../domain/types';
 import {RootStackScreenProps} from '../../router/types';
@@ -31,17 +32,19 @@ export default function HomeScreen({navigation}: HomeScreenProps) {
     isLoading: isEditLoading,
   } = useEditTask();
 
-  const [isNotificationVisible, setIsNotificationVisible] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<Task>();
 
   useEffect(() => {
     if (isEditSuccess) {
-      setIsNotificationVisible(true);
+      Toast.show('Задача успешно обновлена', {
+        duration: Toast.durations.SHORT,
+        position: Toast.positions.BOTTOM,
+        hideOnPress: true,
+      });
       onModalClose();
     }
   }, [isEditSuccess]);
 
-  const onDismiss = () => setIsNotificationVisible(false);
   const onModalClose = () => setTaskToEdit(undefined);
   const onEditClick = (task: Task) => setTaskToEdit(task);
   const onCreateClick = () => navigation.navigate('Create');
@@ -83,11 +86,6 @@ export default function HomeScreen({navigation}: HomeScreenProps) {
               ) : null}
             </View>
           </View>
-          <Portal>
-            <Snackbar visible={isNotificationVisible} onDismiss={onDismiss}>
-              Задача успешно обновлена
-            </Snackbar>
-          </Portal>
           <EditTaskModal
             isVisible={!!taskToEdit}
             defaultValues={taskToEdit}

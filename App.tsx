@@ -6,21 +6,24 @@ import {
   SafeAreaProvider,
   initialWindowMetrics,
 } from 'react-native-safe-area-context';
+import {RootSiblingParent} from 'react-native-root-siblings';
 
 import {Provider} from 'react-redux';
 import {PaperProvider} from 'react-native-paper';
 
 function App(): JSX.Element {
   return (
-    <PaperProvider>
-      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <Provider store={store}>
-          <NavigationContainer>
-            <Routes />
-          </NavigationContainer>
-        </Provider>
-      </SafeAreaProvider>
-    </PaperProvider>
+    <RootSiblingParent>
+      <PaperProvider>
+        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+          <Provider store={store}>
+            <NavigationContainer>
+              <Routes />
+            </NavigationContainer>
+          </Provider>
+        </SafeAreaProvider>
+      </PaperProvider>
+    </RootSiblingParent>
   );
 }
 
